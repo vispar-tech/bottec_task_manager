@@ -1,9 +1,8 @@
-from typing import Generic, List, TypeVar
+from typing import Generic, List, Sequence, TypeVar
 
 from pydantic import BaseModel as PydanticBaseModel
 from pydantic import ConfigDict
 from pydantic.alias_generators import to_camel
-from sqlalchemy import Sequence
 
 
 class BaseModel(PydanticBaseModel):
