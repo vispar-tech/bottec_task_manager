@@ -19,8 +19,8 @@ def get_app() -> FastAPI:
     """
     configure_logging()
     app = FastAPI(
-        title="crm_backend",
-        description="Task manager API",
+        title="Task manager API",
+        description="Simple api for auth and manage tasks.",
         lifespan=lifespan_setup,
         default_response_class=UJSONResponse,
     )
