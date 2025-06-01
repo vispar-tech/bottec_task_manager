@@ -27,8 +27,8 @@ async def get_tasks(
         enum=["title", "description", "is_done", "created_at"],
     ),
     sort_order: str = Query("asc", enum=["asc", "desc"]),
-    page: int = Query(1, ge=1),
-    size: int = Query(50, ge=1),
+    page: int = Query(..., ge=1),
+    size: int = Query(..., ge=1),
     user: User = Depends(get_current_user),
     tasks_service: TasksService = Depends(),
 ) -> Paginated[TaskOut]:
@@ -75,7 +75,7 @@ async def get_task(
     """Получить задачу по ID."""
     task = await tasks_service.get_task(task_id)
     if task is None or task.user_id != user.id:
-        raise HTTPException(status_code=404, detail="Task not found")
+        raise HTTPException(status_code=404, detail="Задача не найдена")
     return task
 
 
@@ -95,7 +95,7 @@ async def update_task(
     """Обновить задачу."""
     task = await tasks_service.update_task(task_id, task_data)
     if task is None or task.user_id != user.id:
-        raise HTTPException(status_code=404, detail="Task not found")
+        raise HTTPException(status_code=404, detail="Задача не найдена")
     return task
 
 

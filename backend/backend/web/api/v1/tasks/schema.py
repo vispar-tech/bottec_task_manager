@@ -20,8 +20,8 @@ class TaskCreate(BaseModel):
 class TaskUpdate(BaseModel):
     """Task update request payload."""
 
-    title: Optional[str] = Field(None, max_length=255)
-    description: Optional[str] = Field(None, max_length=2048)
+    title: Optional[str] = Field(None, min_length=1, max_length=255)
+    description: Optional[str] = Field(None, min_length=1, max_length=2048)
     is_done: Optional[bool] = Field(None)
 
 

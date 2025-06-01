@@ -18,6 +18,12 @@ class UserLogin(BaseModel):
     password: str
 
 
+class InvalidCredentialsResponse(BaseModel):
+    """Schema for invalid credentials."""
+
+    detail: str
+
+
 class UserRegister(BaseModel):
     """Schema for user registration."""
 
@@ -30,5 +36,5 @@ class UserRegister(BaseModel):
     def validate_passwords_match(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Validate that the passwords match."""
         if values["password"] != values["passwordConfirm"]:
-            raise ValueError("passwords do not match")
+            raise ValueError("Пороли не совпадают")
         return values

@@ -1,9 +1,19 @@
-from typing import Any, Dict, Optional, Sequence
+from typing import Any, Callable, Dict, Optional, Sequence
 
-from sqlalchemy import func, select
+from sqlalchemy import ColumnElement, func, select
+from sqlalchemy.orm import InstrumentedAttribute
 
 from backend.db.models.tasks import Task
 from backend.services.db.repository import BaseRepository
+
+FilterFnsType = Dict[InstrumentedAttribute[Any], Callable[[Any], ColumnElement[bool]]]
+
+filter_fns: FilterFnsType = {
+    Task.title: lambda value: Task.title.contains(value),
+    Task.description: lambda value: Task.description.contains(value),
+    Task.is_done: lambda value: Task.is_done.is_(value),
+    Task.user_id: lambda value: Task.user_id == value
+}
 
 
 class TasksRepository(BaseRepository[Task]):
@@ -19,13 +29,13 @@ class TasksRepository(BaseRepository[Task]):
         page: int = 1,
         size: int = 50,
     ) -> tuple[Sequence[Task], int]:
-        """Получить все задачи с фильтрацией, сортировкой и пагинацией."""
+        """Get all tasks with filters, sorting and pagination."""
         query = select(self.model)
 
         if filters:
             for key, value in filters.items():
                 if value is not None and hasattr(self.model, key):
-                    query = query.where(getattr(self.model, key) == value)
+                    query = query.where(filter_fns[getattr(self.model, key)](value))
 
         if sort_by and hasattr(self.model, sort_by):
             sort_column = getattr(self.model, sort_by)
@@ -38,7 +48,9 @@ class TasksRepository(BaseRepository[Task]):
         if filters:
             for key, value in filters.items():
                 if value is not None and hasattr(self.model, key):
-                    count_query = count_query.where(getattr(self.model, key) == value)
+                    count_query = count_query.where(
+                        filter_fns[getattr(self.model, key)](value)
+                    )
         total = await self.session.scalar(count_query) or 0
 
         offset = (page - 1) * size

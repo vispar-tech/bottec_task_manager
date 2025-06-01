@@ -51,7 +51,7 @@ class JWTStrategy:
         except ValueError:
             return None
 
-    async def write_token(self, user: User) -> str:
+    def write_token(self, user: User) -> str:
         """
         Write token for user.
 

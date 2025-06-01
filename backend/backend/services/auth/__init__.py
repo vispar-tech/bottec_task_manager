@@ -64,10 +64,10 @@ class AuthService:
 
         return current_user_dependency
 
-    async def get_login_response(self, user: User) -> Response:
+    def get_login_response(self, user: User) -> Response:
         """Login user and returns response with refresh and access cookies."""
-        access_token = await self.access_strategy.write_token(user)
-        refresh_token = await self.refresh_strategy.write_token(user)
+        access_token = self.access_strategy.write_token(user)
+        refresh_token = self.refresh_strategy.write_token(user)
 
         response = Response(status_code=status.HTTP_204_NO_CONTENT)
         response.set_cookie(
@@ -104,12 +104,12 @@ class AuthService:
         )
         if not user:
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid refresh token",
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Неверный токен",
             )
 
-        new_access_token = await self.access_strategy.write_token(user)
-        new_refresh_token = await self.refresh_strategy.write_token(user)
+        new_access_token = self.access_strategy.write_token(user)
+        new_refresh_token = self.refresh_strategy.write_token(user)
 
         response = Response(status_code=status.HTTP_204_NO_CONTENT)
         response.set_cookie(
@@ -134,7 +134,7 @@ class AuthService:
         )
         return response
 
-    async def get_logout_response(self) -> Response:
+    def get_logout_response(self) -> Response:
         """Clear the user's authentication cookie to log them out."""
         response = Response(status_code=status.HTTP_204_NO_CONTENT)
         response.set_cookie(

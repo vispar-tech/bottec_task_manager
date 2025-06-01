@@ -27,7 +27,7 @@ class UsersService(BaseService[User, UsersRepository]):
         except ValueError as e:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid UUID",
+                detail="Неверный UUID",
             ) from e
 
     async def authenticate(self, credentials: UserLogin) -> User | None:
@@ -102,7 +102,10 @@ class UsersService(BaseService[User, UsersRepository]):
         """
         existing_user = await self.get_by_email(user_data.email)
         if existing_user is not None:
-            raise Exception("User with this email already exists")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Пользователь с таким email уже существует",
+            )
 
         user_dict = user_data.model_dump(include={"email", "password"})
         password = user_dict.pop("password")
