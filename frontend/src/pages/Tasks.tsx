@@ -8,7 +8,6 @@ import {
 	type PaginatedTaskOut,
 	type ReadTasksData,
 	type ValidationError,
-
 } from '@/api'
 import TaskModal, { type TaskFormValues } from '@/features/tasks/TaskModal'
 import { ConfirmModal } from '@/components/shared'
@@ -17,8 +16,6 @@ import { Filters } from '@/features/tasks/Filters'
 import { ErrorDisplay } from '@/features/tasks/ErrorDisplay'
 import { TaskList } from '@/features/tasks/TaskList'
 import { Pagination } from '@/features/tasks/Pagination'
-
-
 
 const Tasks = () => {
 	const [response, setResponse] = useState<PaginatedTaskOut | null>(null)
@@ -44,14 +41,13 @@ const Tasks = () => {
 				const { data, error, status } = await readTasks({
 					query: {
 						...query,
-						page: (query.page ?? 0) + 1,
+						page: (query.page | 0) + 1,
 					},
 				})
 				if (error) {
 					if (error.detail) {
-						setErrors(
-							error.detail.map((err: ValidationError) => err.msg) as string[]
-						)
+						const errors: string[] = error.detail.map(err => err.msg)
+						setErrors(errors)
 					} else {
 						setErrors([
 							`Ошибка ${

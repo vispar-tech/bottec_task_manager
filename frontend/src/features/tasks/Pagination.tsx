@@ -36,13 +36,13 @@ export const Pagination = ({
 				className='px-3 py-1.5 text-gray-800 dark:text-gray-200'
 				aria-current='page'
 			>
-				Страница {(query.page ?? 0) + 1} из {totalPages}
+				Страница {(query.page | 0) + 1} из {totalPages}
 			</span>
 			<button
 				onClick={() => {
 					setQuery({
 						...query,
-						page: Math.min((query.page ?? 0) + 1, totalPages - 1),
+						page: Math.min((query.page | 0) + 1, totalPages - 1),
 					})
 				}}
 				disabled={query.page === totalPages - 1 || isLoading}
